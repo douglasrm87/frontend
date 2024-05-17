@@ -19,11 +19,11 @@ import { useParams } from "react-router-dom";
 import { getUserDetails } from "../../slices/userSlice";
 
 import {
-/*  getUserPhotos, */
+  getUserPhotos, 
   publishPhoto,
-  resetMessage /*,
+  resetMessage,
   deletePhoto,
-  updatePhoto,*/
+  updatePhoto,
 } from "../../slices/photoSlice";
 
 const Profile = () => {
@@ -34,18 +34,19 @@ const Profile = () => {
   const { user, loading } = useSelector((state) => state.user);
   // obter o usuário autentica 
   const { user: userAuth } = useSelector((state) => state.auth);
+    // estados das fotos
+    const {
+      photosArray,
+      loading: loadingPhoto,
+      error: errorPhoto,
+      message: messagePhoto,
+    } = useSelector((state) => state.photo);
+  
   // Load user data
   useEffect(() => {
     dispatch(getUserDetails(id));
-    //dispatch(getUserPhotos(id));
+    dispatch(getUserPhotos(id));
   }, [dispatch, id]);
-  // estados das fotos
-  const {
-    photos,
-    loading: loadingPhoto,
-    error: errorPhoto,
-    message: messagePhoto,
-  } = useSelector((state) => state.photo);
 
   const [title, setTitle] = useState();
   const [image, setImage] = useState();
@@ -86,17 +87,19 @@ const Profile = () => {
 
   // change image state
   const handleFile = (e) => {
+    console.log("handleFile")
+    console.log("handleFile")
+    console.log("handleFile")
     const image = e.target.files[0];
 
     setImage(image);
   };
 
-  // Exclude an image
-  /*
+  // Exclude an image. Ativar o Slice que ativa o service feito
   const handleDelete = (id) => {
     dispatch(deletePhoto(id));
     resetComponentMessage();
-  };*/
+  };
 
   // Show or hide forms
   function hideOrShowForms() {
@@ -127,8 +130,8 @@ const Profile = () => {
       title: editTitle,
       id: editId,
     };
-    //dispatch(updatePhoto(photoData));
-    //resetComponentMessage();
+    dispatch(updatePhoto(photoData));
+    resetComponentMessage();
   };
 
   if (loading) {
@@ -147,6 +150,7 @@ const Profile = () => {
           <p>{user.bio}</p>
         </div>
       </div>
+      {/* Usado para usuario que quer cadastrar foto em seu perfil*/}
       {id === userAuth._id && (
         <>
           <div className="new-photo" ref={newPhotoForm}>
@@ -171,6 +175,7 @@ const Profile = () => {
               )}
             </form>
           </div>
+          {/* Formulario de edição da foto. Abre escondido.*/}
           <div className="edit-photo hide" ref={editPhotoForm}>
             <p>Editando:</p>
             {editImage && (
@@ -193,37 +198,41 @@ const Profile = () => {
         </>
       )} 
 
-      {/* 
+      {/* Visualizar fotos de qualquer perfil*/}
       <div className="user-photos">
         <h2>Fotos publicadas:</h2>
+        {console.log ("photosArray: ",photosArray)}
         <div className="photos-container">
-          {photos &&
-            photos.map((photo) => (
-              <div className="photo" key={photo._id}>
-                {photo.image && (
-                  <img
-                    src={`${uploads}/photos/${photo.image}`}
-                    alt={photo.title}
-                  />
-                )}
-                {id === userAuth._id ? (
-                  <div className="actions">
-                    <Link to={`/photos/${photo._id}`}>
-                      <BsFillEyeFill />
-                    </Link>
-                    <BsPencilFill onClick={() => handleEdit(photo)} />
-                    <BsXLg onClick={() => handleDelete(photo._id)} />
-                  </div>
-                ) : (
-                  <Link className="btn" to={`/photos/${photo._id}`}>
-                    Ver
-                  </Link>
-                )}
-              </div>
+            {photosArray && photosArray.length > 0 &&
+                photosArray.map((photo) => (
+                  <div className="photo" key={photo._id}>
+                    {photo.image && (
+                      <img
+                        src={`${uploads}/photos/${photo.image}`}
+                        alt={photo.title}
+                      />
+                    )}
+                    {
+                      id === userAuth._id ? (
+                        <div className="actions">
+                        <Link to={`/photos/${photo._id}`}>
+                          <BsFillEyeFill />
+                        </Link>
+                        <BsPencilFill onClick={() => handleEdit(photo)} />
+                        {/* A Arrow function dispara o evento. */}
+                        <BsXLg onClick={() => handleDelete(photo._id)} /> 
+                      </div>
+                    ) : (
+                      <Link className="btn" to={`/photos/${photo._id}`}>
+                        Ver
+                      </Link>
+                   )}
+                </div>
             ))}
-          {photos.length === 0 && <p>Ainda não há fotos publicadas...</p>}
+            {photosArray.length === 0 && <p>Ainda não há fotos publicadas...</p>}
+
         </div>
-      </div>*/}
+      </div> 
     </div>
   );
 };
