@@ -3,6 +3,7 @@ import "./Photo.css";
 import { uploads } from "../../utils/config";
 
 // components
+// Message - para dar like na foto
 import Message from "../../components/Message";
 import PhotoItem from "../../components/PhotoItem";
 import LikeContainer from "../../components/LikeContainer";
@@ -15,6 +16,7 @@ import { useParams } from "react-router-dom";
 import { useResetComponentMessage } from "../../hooks/useResetComponentMessage";
 
 // Redux
+// Funções que utilizaremos paa a foto
 import { getPhoto, like, comment } from "../../slices/photoSlice";
 
 const Photo = () => {
@@ -32,30 +34,27 @@ const Photo = () => {
   const [commentText, setCommentText] = useState();
 
   // Load photo data
+
   useEffect(() => {
     dispatch(getPhoto(id));
-  }, [dispatch, id]);
-
+  }, [dispatch, id]); 
   // Like a photo
   const handleLike = () => {
     dispatch(like(photo._id));
 
     resetMessage();
   };
-
   // Insert a comment
   const handleComment = (e) => {
     e.preventDefault();
-
+ 
     const photoData = {
       comment: commentText,
       id: photo._id,
     };
-
     dispatch(comment(photoData));
-
     setCommentText("");
-
+ 
     resetMessage();
   };
 
@@ -65,6 +64,7 @@ const Photo = () => {
 
   return (
     <div id="photo">
+      <h1> Se me ver esta OK :)</h1>
       <PhotoItem photo={photo} />
       <LikeContainer photo={photo} user={user} handleLike={handleLike} />
       <div className="message-container">

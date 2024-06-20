@@ -10,6 +10,7 @@ import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import EditProfile from "./pages/EditProfile/EditProfile";
 import Profile from "./pages/Profile/Profile";
+import Photo from "./pages/Photo/Photo";
 
 // Components
 import Navbar from './components/Navbar';
@@ -50,6 +51,10 @@ function App() {
               path="register"
               element={!auth ? <Register /> : <Navigate to="/" />}
             />
+             <Route
+              path="/photos/:id"
+              element={auth ? <Photo /> : <Navigate to="/login" />}
+            />  
           </Routes> 
         </div>
         <Footer/>

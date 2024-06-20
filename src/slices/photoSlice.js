@@ -123,7 +123,7 @@ export const photoSlice = createSlice({
         state.error = action.payload;
         state.photo = null;
       })
-      /*
+
       .addCase(getPhoto.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -136,7 +136,7 @@ export const photoSlice = createSlice({
         state.photo = action.payload;
       })
      
-      
+     
       .addCase(like.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
@@ -146,7 +146,7 @@ export const photoSlice = createSlice({
           state.photo.likes.push(action.payload.userId);
         }
 
-        state.photos.map((photo) => {
+        state.photos && state.photos.map((photo) => {
           if (photo._id === action.payload.photoId) {
             return photo.likes.push(action.payload.userId);
           }
@@ -159,6 +159,7 @@ export const photoSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+             
       .addCase(comment.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
@@ -184,7 +185,7 @@ export const photoSlice = createSlice({
         state.error = null;
         state.photos = action.payload;
       });
-      */
+     
   },
 });
 
@@ -237,19 +238,17 @@ export const updatePhoto = createAsyncThunk(
     if (data.errors) {
       return thunkAPI.rejectWithValue(data.errors[0]);
     }
-
     return data;
   }
 );
-/*
+
 // Get photo
-export const getPhoto = createAsyncThunk("photo/getphoto", async (id) => {
-  const data = await photoService.getPhoto(id);
+export const getPhoto = createAsyncThunk("photo/getphoto", async (id, thunkAPI) => {
+  const token = thunkAPI.getState().auth.user.token;
+  const data = await photoService.getPhoto(id,token);
 
   return data;
 });
-
-
 
 
 
@@ -259,7 +258,7 @@ export const like = createAsyncThunk("photo/like", async (id, thunkAPI) => {
 
   const data = await photoService.like(id, token);
 
-  // Check for errors
+  // Check for errors - like em foto que não existe.
   if (data.errors) {
     return thunkAPI.rejectWithValue(data.errors[0]);
   }
@@ -267,8 +266,8 @@ export const like = createAsyncThunk("photo/like", async (id, thunkAPI) => {
   return data;
 });
 
-*/
-/*
+
+ 
 // Add comment to a photo
 export const comment = createAsyncThunk(
   "photo/comment",
@@ -306,7 +305,7 @@ export const searchPhotos = createAsyncThunk(
     return data;
   }
 );
-*/
+ 
 
 
 export const { resetMessage } = photoSlice.actions;
