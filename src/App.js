@@ -1,3 +1,6 @@
+// Publicar no Gitbug
+//https://blog.logrocket.com/deploying-react-apps-github-pages/
+
 import './App.css';
 
 // router
