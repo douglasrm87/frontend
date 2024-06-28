@@ -11,7 +11,7 @@ import LikeContainer from "../../components/LikeContainer";
 import PhotoItem from "../../components/PhotoItem";
 import { Link } from "react-router-dom";
 
-// Redux
+// Redux - searchPhotos função criada no photoSlice.js
 import { searchPhotos, like } from "../../slices/photoSlice";
 
 const Search = () => {
@@ -43,7 +43,7 @@ const Search = () => {
   return (
     <div id="search">
       <h2>Você está buscando por: {search}</h2>
-      {photos &&
+      {photos && photos.length > 0 &&
         photos.map((photo) => (
           <div key={photo._id}>
             <PhotoItem photo={photo} />
@@ -53,6 +53,12 @@ const Search = () => {
             </Link>
           </div>
         ))}
+        {photos && photos.length === 0 && (
+        <h2 className="no-photos">
+          Foto não localizada,{" "}
+          <Link to={`/users/${user._id}`}>clique aqui</Link> para começar.
+        </h2>
+      )}
     </div>
   );
 };

@@ -72,14 +72,15 @@ export const photoSlice = createSlice({
       })
       .addCase(getPhotos.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.error = false;
       })
       .addCase(getPhotos.fulfilled, (state, action) => {
         console.log(action.payload);
         state.loading = false;
         state.success = true;
         state.error = null;
-        state.photosArray = action.payload;
+        // Aqui é que faz as fotos irem para a tela da Home.
+        state.photos = action.payload;
       })
       .addCase(deletePhoto.pending, (state) => {
         state.loading = true;
@@ -135,8 +136,6 @@ export const photoSlice = createSlice({
         state.error = null;
         state.photo = action.payload;
       })
-     
-     
       .addCase(like.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
@@ -176,7 +175,7 @@ export const photoSlice = createSlice({
       
       .addCase(searchPhotos.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.error = false;
       })
       .addCase(searchPhotos.fulfilled, (state, action) => {
         console.log(action.payload);
@@ -201,9 +200,13 @@ export const getUserPhotos = createAsyncThunk(
   }
 );
 // Get all photos
-export const getPhotos = createAsyncThunk("photo/getall", async () => {
-  const data = await photoService.getPhotos();
-
+// Na função async, o primeiro parametro sempre são os dados e o segundo o thunkAPI.
+// Por isto utilizar o _, pois não teremos dados neste momento apenas as fotos.
+export const getPhotos = createAsyncThunk("photo/getall", async (_,thunkAPI) => {
+  const token = thunkAPI.getState().auth.user.token;
+  console.log ("em photoSlice.js")
+  const data = await photoService.getPhotos(token);
+  
   return data;
 });
 // Delete a photo
@@ -250,8 +253,6 @@ export const getPhoto = createAsyncThunk("photo/getphoto", async (id, thunkAPI) 
   return data;
 });
 
-
-
 // Like a photo
 export const like = createAsyncThunk("photo/like", async (id, thunkAPI) => {
   const token = thunkAPI.getState().auth.user.token;
@@ -266,8 +267,6 @@ export const like = createAsyncThunk("photo/like", async (id, thunkAPI) => {
   return data;
 });
 
-
- 
 // Add comment to a photo
 export const comment = createAsyncThunk(
   "photo/comment",
@@ -289,24 +288,17 @@ export const comment = createAsyncThunk(
   }
 );
 
-
-
 // Search photos by title
 export const searchPhotos = createAsyncThunk(
   "photo/search",
   async (query, thunkAPI) => {
     const token = thunkAPI.getState().auth.user.token;
-
     const data = await photoService.searchPhotos(query, token);
-
     console.log(data);
     console.log(data.errors);
-
     return data;
   }
 );
  
-
-
 export const { resetMessage } = photoSlice.actions;
 export default photoSlice.reducer;
